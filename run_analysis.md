@@ -41,7 +41,7 @@ dataset <- rbind(train,test)
 mean_col_names <- grep(pattern = "mean",colnames, ignore.case = TRUE)
 std_col_names <- grep(pattern = "std",colnames, ignore.case = TRUE)
 
-#### col_names a character vector used to store the heading names of all the mean and std functions from the 561 available feature set.
+#### col_names is a character vector used to store the heading names of all the mean and std functions from the 561 available feature set.
 col_names <- c()
 col_names <- append(col_names,mean_col_names)
 col_names <- append(col_names,std_col_names)
