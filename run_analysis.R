@@ -15,17 +15,17 @@ library(reshape2)
 
 ##1]Merges the training and the test sets to create one dataset
 ####Preparing column names for X_train and X_test
-featurenames <- read.table("UCI HAR Dataset/features.txt",header = FALSE)
+featurenames <- read.table("UCI HAR Dataset/features.txt",header = FALSE,check.names = FALSE)
 colnames <- as.character(featurenames[,2])
 
 ####Reads and creates the training dataset.
-xtrain <- read.table("UCI HAR Dataset/train/X_train.txt", header = FALSE,col.names = colnames)
+xtrain <- read.table("UCI HAR Dataset/train/X_train.txt", header = FALSE,col.names = colnames,check.names = FALSE)
 ytrain <- read.table("UCI HAR Dataset/train/y_train.txt", header = FALSE, col.names = c("ActivityLabels"))
 subjecttrain <- read.table("UCI HAR Dataset/train/subject_train.txt", header = FALSE,col.names = c("SubjectNumber"))
 train <- cbind(xtrain,ytrain,subjecttrain)
 
 ####Reads and creates the test dataset.
-xtest <- read.table("UCI HAR Dataset/test/X_test.txt", header = FALSE,col.names = colnames)
+xtest <- read.table("UCI HAR Dataset/test/X_test.txt", header = FALSE,col.names = colnames, check.names = FALSE)
 ytest <- read.table("UCI HAR Dataset/test/y_test.txt", header = FALSE, col.names = c("ActivityLabels"))
 subjecttest <- read.table("UCI HAR Dataset/test/subject_test.txt", header = FALSE, col.names = c("SubjectNumber"))
 test <- cbind(xtest,ytest,subjecttest)
@@ -37,11 +37,11 @@ dataset <- rbind(train,test)
 
 
 ##2] Extracts only the measurements on the mean and standard deviation for each measurement.
-#### The grep function partially matches column names having mean or std in them and returns are character vector.
-mean_col_names <- grep(pattern = "mean",colnames, ignore.case = TRUE)
-std_col_names <- grep(pattern = "std",colnames, ignore.case = TRUE)
+#### The grep function partially matches column names having mean() or std() in them.
+mean_col_names <- grep(pattern = "mean()",colnames)
+std_col_names <- grep(pattern = "std()",colnames)
 
-#### col_names is a character vector used to store the heading names of all the mean and std functions from the 561 available feature set.
+#### col_names is a numeric vector used to store the indexes of heading names of all the mean and std functions from the 561 available feature set.
 col_names <- c()
 col_names <- append(col_names,mean_col_names)
 col_names <- append(col_names,std_col_names)
@@ -69,25 +69,24 @@ to_descriptive_activitynames <- function(x)
            "LAYING") 
 }
 #### The below statement applied the to_descriptive_activitynames function to the dataset.
-dataset$ActivityLabels <- sapply(dataset$ActivityLabels,to_descriptive_activitynames)
-View(dataset$ActivityLabels)
+mean_std_dataset$ActivityLabels <- sapply(mean_std_dataset$ActivityLabels,to_descriptive_activitynames)
+View(mean_std_dataset$ActivityLabels)
 
 
 ##5]Creates a second, independent tidy data set with the average of each variable for each activity and each subject.
-####colnames is used to store the column names of the feature set.
-colnames <- names(dataset)
-colnames <- colnames[1:561]
-
+####colnames is used to store the indexes of column names of the feature set having just mean() in them.
+colnames <- names(mean_std_dataset)
+colnames <- grep(pattern = "mean()",colnames)
+colnames <- append(colnames,c(1,2),after = 0)
+mean_dataset <- mean_std_dataset[,colnames]
 ####The below code creates a data frame having interactions of ActivityLabels and Subject Number
-mydata <- data.frame(ActivityLabelsInteractSubjectNumber=interaction(as.factor(dataset[,562]), as.factor(dataset[,563])), dataset[,1:561])
+mydata <- data.frame(ActivityLabelsInteractSubjectNumber=interaction(as.factor(mean_dataset[,1]), as.factor(mean_dataset[,2])), mean_dataset[,3:ncol(mean_dataset)])
 
 ####Melts the data and creates the required dataset named 'average_dataset' which represents the average of each variable for each activity and each subject.
-melteddata <- melt(mydata,id = "ActivityLabelsInteractSubjectNumber", measure.vars = colnames)
+melteddata <- melt(mydata,id = "ActivityLabelsInteractSubjectNumber")
 
 ####The below 'average_dataset' is the required dataset.
-mydata <- dcast(melteddata,ActivityLabelsInteractSubjectNumber~variable,mean)
-mean_col_names <- grep(pattern = "mean",names(mydata), ignore.case = TRUE)
-average_dataset <- data.frame(mydata[,1],mydata[,mean_col_names])
+average_dataset <- dcast(melteddata,ActivityLabelsInteractSubjectNumber~variable,mean)
 ####The below 3 lines get the working directory and writes the file 'average_dataset.csv' in the working directory.
 workingdirectory <- getwd()
 outputdirectory = paste(workingdirectory,"/average_dataset.csv",sep="")
