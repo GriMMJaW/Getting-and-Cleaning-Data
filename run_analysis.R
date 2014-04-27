@@ -46,9 +46,9 @@ col_names <- c()
 col_names <- append(col_names,mean_col_names)
 col_names <- append(col_names,std_col_names)
 col_names <- sort(col_names)
+col_names <- append(col_names,c(562,563), after = 0)
 ####The below 'mean_std_dataset' is the dataset consisting of the measurements on the mean and standard deviation for each measurement.
 mean_std_dataset <- dataset[,col_names]
-
 ####The below 3 lines get the working directory and writes the file 'mean_std_dataset.csv' in the working directory.
 workingdirectory <- getwd()
 outputdirectory = paste(workingdirectory,"/mean_std_dataset.csv",sep="")
@@ -85,8 +85,9 @@ mydata <- data.frame(ActivityLabelsInteractSubjectNumber=interaction(as.factor(d
 melteddata <- melt(mydata,id = "ActivityLabelsInteractSubjectNumber", measure.vars = colnames)
 
 ####The below 'average_dataset' is the required dataset.
-average_dataset <- dcast(melteddata,ActivityLabelsInteractSubjectNumber~variable,mean)
-
+mydata <- dcast(melteddata,ActivityLabelsInteractSubjectNumber~variable,mean)
+mean_col_names <- grep(pattern = "mean",names(mydata), ignore.case = TRUE)
+average_dataset <- data.frame(mydata[,1],mydata[,mean_col_names])
 ####The below 3 lines get the working directory and writes the file 'average_dataset.csv' in the working directory.
 workingdirectory <- getwd()
 outputdirectory = paste(workingdirectory,"/average_dataset.csv",sep="")
