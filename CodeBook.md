@@ -15,4 +15,8 @@
 ###Libraries Used:
 ####        1] reshape2.
 
-###Everything else is explained in the R script file named run_analysis.R. There is only a single script file which should that needs to be executed and care should be taken that the data is extracted and placed in the working directory before execution of the script. The output files will be created in your working directory. 
+###Assumptions
+####        1] It is assumed that all the functions having with mean(), meanFreq() come under mean functions and std() com under standard deviation functions.
+####        2] Data is extracted and stored in the working directory.
+
+###Everything else is explained in the R script file named run_analysis.R. There is only a single script file which should that needs to be executed. The output files will be created in your working directory (working directory can be obtained by using getwd() function. 
