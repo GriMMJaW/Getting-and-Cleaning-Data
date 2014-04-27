@@ -16,7 +16,7 @@
 ####        1] reshape2.
 
 ###Assumptions
-####        1] It is assumed that all the functions having with mean(), meanFreq() come under mean functions and std() com under standard deviation functions.
+####        1] It is assumed that all the variables/features having mean(), meanFreq() as part of their name come under mean functions and std() come under standard deviation functions.
 ####        2] Data is extracted and stored in the working directory.
 
 ###Everything else is explained in the R script file named run_analysis.R. There is only a single script file which should that needs to be executed. The output files will be created in your working directory (working directory can be obtained by using getwd() function. 
